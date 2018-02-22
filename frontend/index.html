@@ -6,7 +6,7 @@
         var ABI = [{ "constant": true, "inputs": [{ "name": "", "type": "uint256" }], "name": "predictions", "outputs": [{ "name": "predictor", "type": "address" }, { "name": "predictedBlock", "type": "uint256" }, { "name": "predictedHash", "type": "bytes32" }, { "name": "creationBlock", "type": "uint256" }, { "name": "won", "type": "bool" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint256" }], "name": "winningPredictionIndexes", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "inputs": [], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "payable": true, "stateMutability": "payable", "type": "fallback" }, { "anonymous": false, "inputs": [{ "indexed": false, "name": "investor", "type": "address" }, { "indexed": false, "name": "value", "type": "uint256" }, { "indexed": false, "name": "blockNumber", "type": "uint256" }], "name": "InvestmentEvent", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "name": "predictor", "type": "address" }, { "indexed": false, "name": "blockNumber", "type": "uint256" }, { "indexed": false, "name": "predictionIndex", "type": "uint256" }], "name": "PredictionEvent", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "name": "predictor", "type": "address" }, { "indexed": false, "name": "blockNumber", "type": "uint256" }, { "indexed": false, "name": "predictionIndex", "type": "uint256" }], "name": "FailedProofOfTimetravelEvent", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "name": "predictor", "type": "address" }, { "indexed": false, "name": "blockNumber", "type": "uint256" }, { "indexed": false, "name": "predictionIndex", "type": "uint256" }], "name": "ProofOfTimetravelEvent", "type": "event" }, { "constant": false, "inputs": [{ "name": "_block", "type": "uint256" }, { "name": "_hash", "type": "bytes32" }], "name": "makePrediction", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "_index", "type": "uint256" }], "name": "claimReward", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "_address", "type": "address" }], "name": "getPendingPredictionByAddress", "outputs": [{ "name": "", "type": "address" }, { "name": "", "type": "uint256" }, { "name": "", "type": "bytes32" }, { "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "_address", "type": "address" }], "name": "getPendingPredictionIndexByAddress", "outputs": [{ "name": "", "type": "int256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "_index", "type": "uint256" }], "name": "getPrediction", "outputs": [{ "name": "", "type": "address" }, { "name": "", "type": "uint256" }, { "name": "", "type": "bytes32" }, { "name": "", "type": "uint256" }, { "name": "", "type": "bool" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "getPredictionsLength", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "_index", "type": "uint256" }], "name": "getWinningPrediction", "outputs": [{ "name": "", "type": "address" }, { "name": "", "type": "uint256" }, { "name": "", "type": "bytes32" }, { "name": "", "type": "uint256" }, { "name": "", "type": "bool" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "getWinningPredictionsLength", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "timeTravelProven", "outputs": [{ "name": "", "type": "bool" }], "payable": false, "stateMutability": "view", "type": "function" }]
         var contract 
         var predictions = [];
-
+       
         var onLoad = function() {
 
             if (typeof window.web3 !== 'undefined') {
@@ -22,6 +22,9 @@
                 contract = web3.eth.contract(ABI).at(contractAddress)
                 web3.eth.defaultAccount = web3.eth.accounts[0]
             }
+
+            var addressSpan = document.getElementById("addressSpan")
+            addressSpan.innerHTML = contractAddress
 
             loadBalance()
         }
@@ -136,7 +139,9 @@
     <body onload="onLoad()">
         Time travel proven: <span id="timeTravelSpan"></span>
         <br />
-        Current pot: <span id="balanceSpan"></span>
+        Current pot: <span id="balanceSpan"> </span> 
+        <br />
+        Donate to Timetravelers: <span id="addressSpan"></span>
         <br />
 
         Make Prediction:
