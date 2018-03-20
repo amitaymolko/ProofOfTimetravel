@@ -22,6 +22,8 @@ class Home extends Component {
     console.log('this.ProofOfTimeTravel', this.ProofOfTimeTravel)
     this.timeTravelProvenDataKey = this.ProofOfTimeTravel.methods.timeTravelProven.cacheCall()
     this.predictionsLengthDataKey = this.ProofOfTimeTravel.methods.getPredictionsLength.cacheCall()
+    this.predictionsDataKeys = {}
+    this.predictions = []
     // this.makeTxStackId = this.ProofOfTimeTravel.methods.makePrediction.cacheSend(5000, '0xdec9baa88eaba16beada45c6bb941f18bb969eadecef0b0137fc718073c6cf88', { gas: 4700000})
   }
 
@@ -34,17 +36,47 @@ class Home extends Component {
         // fetching
       }
 
-      if (this.predictionsLengthDataKey in this.props.ProofOfTimeTravel.getPredictionsLength) {
-        const predictionsLength = this.props.ProofOfTimeTravel.getPredictionsLength[this.predictionsLengthDataKey].value
-        console.log('predictionsLength', predictionsLength)
-      }
+
+      // if (this.getPredictionsDataKey in this.props.ProofOfTimeTravel.getPredictions) {
+      //   const getPredictions = this.props.ProofOfTimeTravel.getPredictions[this.getPredictionsDataKey].value
+      //   console.log('getPredictions', getPredictions)
+      // }
      
       // const predictionsLength = this.ProofOfTimeTravel.methods.getPredictionsLength.cacheCall()
     }
     return 'Not Yet :('
   }
 
+  getPredictions() {
+    if (this.predictionsLengthDataKey in this.props.ProofOfTimeTravel.getPredictionsLength) {
+      const predictionsLength = this.props.ProofOfTimeTravel.getPredictionsLength[this.predictionsLengthDataKey].value
+      console.log('predictionsLength', predictionsLength)
+      // console.log('this.predictionsDataKeys', this.predictionsDataKeys)
+      // this.predictions = []
+      for (let index = 0; index < predictionsLength; index++) {
+        if (!(index in this.predictionsDataKeys)) {
+          console.log('index', index)
+          // console.log('this.ProofOfTimeTravel.methods.getPrediction', this.ProofOfTimeTravel.methods.getPrediction.cacheCall(index))
+          
+          this.predictionsDataKeys[index] = this.ProofOfTimeTravel.methods.getPrediction.cacheCall(index)
+          // console.log('this.predictionsDataKeys[index]', this.predictionsDataKeys[index])
+          
+        } 
+        const dataKey = this.predictionsDataKeys[index];
+        if (dataKey in this.props.ProofOfTimeTravel.getPrediction) {
+          const prediction = this.props.ProofOfTimeTravel.getPrediction[dataKey].value
+          // console.log('prediction', prediction)
+          
+          this.predictions[index] = prediction
+          console.log('this.predictions', this.predictions)
+          
+        }
+      }
+    }
+  }
+
   render() {
+    this.getPredictions()
     return (
       <main className="container">
         <div className="pure-g">
