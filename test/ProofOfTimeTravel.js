@@ -1,12 +1,13 @@
-const ProofOfTimetravel = artifacts.require('ProofOfTimetravel')
+const ProofOfTimeTravel = artifacts.require('ProofOfTimeTravel')
 
-contract('ProofOfTimetravel', (accounts) => {
+contract('ProofOfTimeTravel', (accounts) => {
   
   var account = accounts[0]
 
-  describe('deploy and grab ProofOfTimetravel', () => {
+  describe('deploy and grab ProofOfTimeTravel', () => {
     it('deploy and grab', async () => {
-      Contract = await ProofOfTimetravel.new()
+      // Contract = await ProofOfTimeTravel.new()
+      Contract = await ProofOfTimeTravel.deployed()
       console.log('Contract', Contract.address)
       // await Contract.send(web3.toWei(2, 'ether'))
     });
