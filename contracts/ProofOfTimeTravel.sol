@@ -89,4 +89,8 @@ contract ProofOfTimeTravel {
     function timeTravelProven() public view returns(bool) {
         return this.getWinningPredictionsLength() > 0;
     }
+
+    function getBlockNumber() public view returns(uint) {
+        return block.number;
+    }
 }

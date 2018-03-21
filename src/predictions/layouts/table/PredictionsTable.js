@@ -26,7 +26,8 @@ class PredictionsTable extends Component {
         <TableBody>
           {predictions.map(prediction => 
             {
-              const key = `${prediction[0]}-${prediction[1]}-${prediction[2]}-${prediction[3]}`
+              const index = predictions.indexOf(prediction)
+            const key = `${prediction[0]}-${prediction[1]}-${prediction[2]}-${prediction[3]}`
               return (
                 <PredictionsRow key={key} prediction={prediction} />
               )

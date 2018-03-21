@@ -1,12 +1,15 @@
 import React, { Component } from 'react'
-import { ContractData, ContractForm } from 'drizzle-react-components'
+// import { ContractData, ContractForm } from 'drizzle-react-components'
 import timetravel from '../../timetravel.jpg'
 import PredictionsTable from '../../predictions/layouts/table/PredictionsTable'
+import TextField from 'material-ui/TextField'
+import RaisedButton from 'material-ui/RaisedButton'
+import Snackbar from 'material-ui/Snackbar'
 
 class Home extends Component {
   constructor(props, context) {
     super(props)
-    const web3 = context.drizzle.web3;
+    const web3 = context.drizzle.web3
     console.log('context.drizzle', context.drizzle.store.getState())
     
     const ProofOfTimeTravel = context.drizzle.contracts.ProofOfTimeTravel
@@ -17,13 +20,23 @@ class Home extends Component {
       dataKeys: {
         timeTravelProven: ProofOfTimeTravel.methods.timeTravelProven.cacheCall(),
         getPredictionsLength: ProofOfTimeTravel.methods.getPredictionsLength.cacheCall(),
+        getBlockNumber: ProofOfTimeTravel.methods.getBlockNumber.cacheCall(),
         getPrediction: {}
       },
       predictions: [],
       address: ProofOfTimeTravel._address,
       blockNumber: 0,
-      balance: 'loading...'
-    };
+      balance: 'loading...',
+      form: {
+        blockNumber: '',
+        blockHash: ''
+      },
+      makePredictionStackId: null,
+      alert: {
+        open: false,
+        message: ''
+      }
+    }
 
     console.log('this.state.ProofOfTimeTravel', this.state.ProofOfTimeTravel)
     
@@ -35,17 +48,29 @@ class Home extends Component {
     //   const txHash = this.props.transactionStack[this.makeTxStackId]
     //   console.log('txHash', txHash)
     //   const status = this.props.transactions[txHash].status
-    //   console.log('status', status);
+    //   console.log('status', status)
 
     // }   
 
     // this.makeTxStackId = this.state.ProofOfTimeTravel.methods.makePrediction.cacheSend(500, '0xdec9baa88eaba16beada45c6bb941f18bb969eadecef0b0137fc718073c6cf88', { gas: 4700000})
   }
+  componentDidUpdate(prevProps, prevState) {
+    console.log('prevProps', prevProps)
+    console.log('prevState', prevState)
 
-  componentWillMount() {    
+    console.log('this.props', this.props)
+    console.log('this.state', this.state)
+  }
+
+
+  reloadData() {
     this.getPredictionsNoCache()
     this.loadContractBalance()
     this.getBlockNumber()
+  }
+
+  componentWillMount() {    
+    this.reloadData()
   }
 
   async loadContractBalance() {
@@ -90,7 +115,7 @@ class Home extends Component {
             }
           })
         } 
-        const dataKey = getPrediction[index];
+        const dataKey = getPrediction[index]
         if (dataKey in this.props.ProofOfTimeTravel.getPrediction) {
           const prediction = this.props.ProofOfTimeTravel.getPrediction[dataKey].value
 
@@ -106,15 +131,17 @@ class Home extends Component {
   }
 
   async getPredictionsNoCache () {
+    const predictions = []
+
     const predictionsLength = await this.state.ProofOfTimeTravel.methods.getPredictionsLength().call()
     for (let index = 0; index < predictionsLength; index++) {
       const prediction = await this.state.ProofOfTimeTravel.methods.getPrediction(index).call()
-      const predictions = this.state.predictions
-      predictions[index] = prediction
-      this.setState({
-        predictions
-      })            
+      predictions[index] = prediction  
     }
+
+    this.setState({
+      predictions
+    })  
   }
 
   async getBlockNumber () {
@@ -132,19 +159,54 @@ class Home extends Component {
   }
 
   getPendingPredictions(predictions) {
-
     let pendingPredictions = this.filterPendingPredictions(this.orderByBlockNumber(predictions), this.state.blockNumber)
     pendingPredictions = pendingPredictions.slice(0, 10)
     return pendingPredictions
   }
 
+  handleChange = (event) => {
+    const id = event.target.id
+    const value = event.target.value
+    const form = this.state.form
+    form[id] = value
+    this.setState({ form })
+  }
+
+  makePrediction = () => {
+    const {form} = this.state
+    const makePredictionStackId = this.state.ProofOfTimeTravel.methods.makePrediction.cacheSend(form.blockNumber, form.blockHash, { gas: 120000})
+    this.setState({ makePredictionStackId})
+    console.log('makePredictionStackId', makePredictionStackId)
+  
+    this.setState({
+      form: {
+        blockNumber: '',
+        blockHash: ''
+      }
+    })
+
+    this.showAlert('Submitted prediction')
+    this.reloadData()
+  }
+
+  showAlert = (message) => {
+    const {alert} = this.state
+    alert.open = true
+    alert.message = message
+    this.setState({ alert })
+  }
+
+  handleRequestClose = () => {
+    const {alert} = this.state
+    alert.open = false
+    this.setState({ alert })
+  }
+
+
   render() {
-    const { predictions, address, balance, blockNumber} = this.state
+    const { predictions, address, balance, blockNumber, alert} = this.state
     const timeTravelProvenString = this.getTimeTravelProvenString()
     const pendingPredictions = this.getPendingPredictions(predictions)
-    // console.log('pendingPredictions', pendingPredictions)
-    
-    // this.getPredictions()
 
     return (
       <main className="container">
@@ -163,10 +225,36 @@ class Home extends Component {
           </div>
 
           <div className="pure-u-1-1">
+            <h2>Make Prediction:</h2>
+            <TextField
+              floatingLabelText="Block Number"
+              id='blockNumber'
+              value={this.state.form.blockNumber} 
+              onChange={this.handleChange}
+              />
+            <br />
+            <TextField
+              floatingLabelText="Block Hash"
+              id='blockHash'
+              value={this.state.form.blockHash} 
+              onChange={this.handleChange}
+              />
+            <br />
+            <RaisedButton label="Sumbit" primary={true} style={{ margin: 12 }} onClick={this.makePrediction} />
+      
+          </div>
+
+          <div className="pure-u-1-1">
             <h2>Pending Predictions (Next 10)</h2>
             <PredictionsTable predictions={pendingPredictions}/>
           </div>
         </div>
+        <Snackbar
+          open={alert.open}
+          message={alert.message}
+          autoHideDuration={4000}
+          onRequestClose={this.handleRequestClose}
+        />
       </main>
     )
   }
