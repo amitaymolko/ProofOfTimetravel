@@ -12,9 +12,6 @@ import LoadingContainer from './layouts/loading/LoadingContainer'
 
 // Contracts
 import ProofOfTimeTravel from './../build/contracts/ProofOfTimeTravel.json'
-import ComplexStorage from './../build/contracts/ComplexStorage.json'
-import SimpleStorage from './../build/contracts/SimpleStorage.json'
-import TutorialToken from './../build/contracts/TutorialToken.json'
 
 // Redux Store
 import store from './store'
@@ -33,13 +30,9 @@ const options = {
   },
   contracts: [
     ProofOfTimeTravel,
-    ComplexStorage,
-    SimpleStorage,
-    TutorialToken
   ],
   events: {
     ProofOfTimeTravel: ['InvestmentEvent', 'PredictionEvent', 'FailedProofOfTimeTravelEvent', 'ProofOfTimeTravelEvent'],
-    SimpleStorage: ['StorageSet']
   }
 }
 

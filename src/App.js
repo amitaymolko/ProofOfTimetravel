@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 // Styles
 import './css/oswald.css'
@@ -10,7 +11,9 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        {this.props.children}
+        <MuiThemeProvider>
+          {this.props.children}
+        </MuiThemeProvider>
       </div>
     );
   }

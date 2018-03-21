@@ -1,12 +1,33 @@
 import React, { Component } from 'react'
 import { ContractData, ContractForm } from 'drizzle-react-components'
-import logo from '../../logo.png'
+import timetravel from '../../timetravel.jpg'
+import PredictionsTable from '../../predictions/layouts/table/PredictionsTable'
 
 class Home extends Component {
   constructor(props, context) {
     super(props)
-    this.web3 = context.drizzle.web3
-    console.log('this.web3', this.web3)
+    const web3 = context.drizzle.web3;
+    console.log('context.drizzle', context.drizzle.store.getState())
+    
+    const ProofOfTimeTravel = context.drizzle.contracts.ProofOfTimeTravel
+
+    this.state = { 
+      web3,
+      ProofOfTimeTravel,
+      dataKeys: {
+        timeTravelProven: ProofOfTimeTravel.methods.timeTravelProven.cacheCall(),
+        getPredictionsLength: ProofOfTimeTravel.methods.getPredictionsLength.cacheCall(),
+        getPrediction: {}
+      },
+      predictions: [],
+      address: ProofOfTimeTravel._address,
+      blockNumber: 0,
+      balance: 'loading...'
+    };
+
+    console.log('this.state.ProofOfTimeTravel', this.state.ProofOfTimeTravel)
+    
+    
     // const block = this.web3.eth.getBlock('latest')
     // console.log('block', block)
     
@@ -18,103 +39,132 @@ class Home extends Component {
 
     // }   
 
-    this.ProofOfTimeTravel = context.drizzle.contracts.ProofOfTimeTravel
-    console.log('this.ProofOfTimeTravel', this.ProofOfTimeTravel)
-    this.timeTravelProvenDataKey = this.ProofOfTimeTravel.methods.timeTravelProven.cacheCall()
-    this.predictionsLengthDataKey = this.ProofOfTimeTravel.methods.getPredictionsLength.cacheCall()
-    this.predictionsDataKeys = {}
-    this.predictions = []
-    // this.makeTxStackId = this.ProofOfTimeTravel.methods.makePrediction.cacheSend(5000, '0xdec9baa88eaba16beada45c6bb941f18bb969eadecef0b0137fc718073c6cf88', { gas: 4700000})
+    // this.makeTxStackId = this.state.ProofOfTimeTravel.methods.makePrediction.cacheSend(500, '0xdec9baa88eaba16beada45c6bb941f18bb969eadecef0b0137fc718073c6cf88', { gas: 4700000})
+  }
+
+  componentWillMount() {    
+    this.getPredictionsNoCache()
+    this.loadContractBalance()
+    this.getBlockNumber()
+  }
+
+  async loadContractBalance() {
+    const weiBalance = await this.state.web3.eth.getBalance(this.state.address)
+    const balance = this.state.web3.utils.fromWei(weiBalance.toString(), 'ether') + ' ETH'
+    console.log('balance', balance)
+    
+    this.setState({balance})
   }
 
   getTimeTravelProvenString() {
     if (this.props.drizzleStatus.initialized) {
-      if (this.timeTravelProvenDataKey in this.props.ProofOfTimeTravel.timeTravelProven) {
-        const timeTravelProven = this.props.ProofOfTimeTravel.timeTravelProven[this.timeTravelProvenDataKey].value
-        console.log('timeTravelProven', timeTravelProven)
+      if (this.state.dataKeys.timeTravelProven in this.props.ProofOfTimeTravel.timeTravelProven) {
+        const timeTravelProven = this.props.ProofOfTimeTravel.timeTravelProven[this.state.dataKeys.timeTravelProven].value
+        if (timeTravelProven) {
+          return "OMG! YES!"
+        }
       } else {
         // fetching
       }
-
-
-      // if (this.getPredictionsDataKey in this.props.ProofOfTimeTravel.getPredictions) {
-      //   const getPredictions = this.props.ProofOfTimeTravel.getPredictions[this.getPredictionsDataKey].value
-      //   console.log('getPredictions', getPredictions)
-      // }
-     
-      // const predictionsLength = this.ProofOfTimeTravel.methods.getPredictionsLength.cacheCall()
     }
     return 'Not Yet :('
   }
 
   getPredictions() {
-    if (this.predictionsLengthDataKey in this.props.ProofOfTimeTravel.getPredictionsLength) {
-      const predictionsLength = this.props.ProofOfTimeTravel.getPredictionsLength[this.predictionsLengthDataKey].value
+    console.log('this.props.ProofOfTimeTravel.getPredictionsLength', this.props.ProofOfTimeTravel.getPredictionsLength)
+    
+    if (this.state.dataKeys.getPredictionsLength in this.props.ProofOfTimeTravel.getPredictionsLength) {
+      const predictionsLength = this.props.ProofOfTimeTravel.getPredictionsLength[this.state.dataKeys.getPredictionsLength].value
       console.log('predictionsLength', predictionsLength)
-      // console.log('this.predictionsDataKeys', this.predictionsDataKeys)
-      // this.predictions = []
       for (let index = 0; index < predictionsLength; index++) {
-        if (!(index in this.predictionsDataKeys)) {
+        const getPrediction = this.state.dataKeys.getPrediction
+
+        if (!(index in this.state.dataKeys.getPrediction)) {
           console.log('index', index)
-          // console.log('this.ProofOfTimeTravel.methods.getPrediction', this.ProofOfTimeTravel.methods.getPrediction.cacheCall(index))
           
-          this.predictionsDataKeys[index] = this.ProofOfTimeTravel.methods.getPrediction.cacheCall(index)
-          // console.log('this.predictionsDataKeys[index]', this.predictionsDataKeys[index])
+          getPrediction[index] = this.state.ProofOfTimeTravel.methods.getPrediction.cacheCall(index)
           
+          this.setState({
+            dataKeys: {
+              getPrediction
+            }
+          })
         } 
-        const dataKey = this.predictionsDataKeys[index];
+        const dataKey = getPrediction[index];
         if (dataKey in this.props.ProofOfTimeTravel.getPrediction) {
           const prediction = this.props.ProofOfTimeTravel.getPrediction[dataKey].value
-          // console.log('prediction', prediction)
+
+          const predictions = this.state.predictions
           
-          this.predictions[index] = prediction
-          console.log('this.predictions', this.predictions)
-          
+          predictions[index] = prediction
+          this.setState({
+            predictions
+          })          
         }
       }
     }
   }
 
+  async getPredictionsNoCache () {
+    const predictionsLength = await this.state.ProofOfTimeTravel.methods.getPredictionsLength().call()
+    for (let index = 0; index < predictionsLength; index++) {
+      const prediction = await this.state.ProofOfTimeTravel.methods.getPrediction(index).call()
+      const predictions = this.state.predictions
+      predictions[index] = prediction
+      this.setState({
+        predictions
+      })            
+    }
+  }
+
+  async getBlockNumber () {
+    const block = await this.state.web3.eth.getBlock('latest')
+    const blockNumber = block.number
+    this.setState({ blockNumber})
+  }
+
+  orderByBlockNumber(predictions) {    
+    return predictions.sort((a, b) => a[1] - b[1])
+  }
+
+  filterPendingPredictions(predictions, blocknumber) {
+    return predictions.filter(prediction => (parseInt(prediction[1]) > blocknumber))
+  }
+
+  getPendingPredictions(predictions) {
+
+    let pendingPredictions = this.filterPendingPredictions(this.orderByBlockNumber(predictions), this.state.blockNumber)
+    pendingPredictions = pendingPredictions.slice(0, 10)
+    return pendingPredictions
+  }
+
   render() {
-    this.getPredictions()
+    const { predictions, address, balance, blockNumber} = this.state
+    const timeTravelProvenString = this.getTimeTravelProvenString()
+    const pendingPredictions = this.getPendingPredictions(predictions)
+    // console.log('pendingPredictions', pendingPredictions)
+    
+    // this.getPredictions()
+
     return (
       <main className="container">
         <div className="pure-g">
           <div className="pure-u-1-1 header">
-            <img src={logo} alt="drizzle-logo" />
+            <img src={timetravel} alt="timetravel-logo" className="mainImage"/>
             <h1>Proof of Time-Travel</h1>
-            <p>Has anyone proven they are from the future? {this.getTimeTravelProvenString()}</p>
-            <br/><br/>
-          </div>
-        
-          <div className="pure-u-1-1">
-            <h2>SimpleStorage</h2>
-            <p>This shows a simple ContractData component with no arguments, along with a form to set its value.</p>
-            <p><strong>Stored Value</strong>: <ContractData contract="SimpleStorage" method="storedData" /></p>
-            <ContractForm contract="SimpleStorage" method="set" />
-
+            <p>Has anyone proven they are from the future? {timeTravelProvenString}</p>
             <br/><br/>
           </div>
 
           <div className="pure-u-1-1">
-            <h2>TutorialToken</h2>
-            <p>Here we have a form with custom, friendly labels. Also note the token symbol will not display a loading indicator. We've suppressed it with the <code>hideIndicator</code> prop because we know this variable is constant.</p>
-            <p><strong>Total Supply</strong>: <ContractData contract="TutorialToken" method="totalSupply" methodArgs={[{from: this.props.accounts[0]}]} /> <ContractData contract="TutorialToken" method="symbol" hideIndicator /></p>
-            <p><strong>My Balance</strong>: <ContractData contract="TutorialToken" method="balanceOf" methodArgs={[this.props.accounts[0]]} /></p>
-            <h3>Send Tokens</h3>
-            <ContractForm contract="TutorialToken" method="transfer" labels={['To Address', 'Amount to Send']} />
-
-            <br/><br/>
+            <h2>Contract address: {address}</h2>
+            <p>Balance: {balance}</p>
+            <p>Last block: {blockNumber}</p>
           </div>
 
           <div className="pure-u-1-1">
-            <h2>ComplexStorage</h2>
-            <p>Finally this contract shows data types with additional considerations. Note in the code the strings below are converted from bytes to UTF-8 strings and the device data struct is iterated as a list.</p>
-            <p><strong>String 1</strong>: <ContractData contract="ComplexStorage" method="string1" toUtf8 /></p>
-            <p><strong>String 2</strong>: <ContractData contract="ComplexStorage" method="string2" toUtf8 /></p>
-            <strong>Single Device Data</strong>: <ContractData contract="ComplexStorage" method="singleDD" />
-
-            <br/><br/>
+            <h2>Pending Predictions (Next 10)</h2>
+            <PredictionsTable predictions={pendingPredictions}/>
           </div>
         </div>
       </main>

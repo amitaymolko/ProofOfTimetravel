@@ -15,7 +15,6 @@
     "css-loader": "0.26.0",
     "detect-port": "1.0.1",
     "dotenv": "2.0.0",
-    "drizzle": "^1.0.1",
     "drizzle-react": "^1.0.1",
     "drizzle-react-components": "^1.0.1",
     "eslint": "3.8.1",
@@ -39,6 +38,8 @@
     "postcss-loader": "1.0.0",
     "promise": "7.1.1",
     "react-dev-utils": "^0.4.2",
+    "reactotron-react-js": "^1.13.0",
+    "reactotron-redux": "^1.13.0",
     "recursive-readdir": "2.1.0",
     "strip-ansi": "3.0.1",
     "style-loader": "0.13.1",
@@ -52,6 +53,7 @@
     "zeppelin-solidity": "^1.6.0"
   },
   "dependencies": {
+    "material-ui": "^0.20.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-redux": "^5.0.2",
