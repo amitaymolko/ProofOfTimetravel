@@ -10,8 +10,6 @@ const mapStateToProps = state => {
     transactionStack: state.transactionStack,
     transactions: state.transactions,
     ProofOfTimeTravel: state.contracts.ProofOfTimeTravel,
-    SimpleStorage: state.contracts.SimpleStorage,
-    TutorialToken: state.contracts.TutorialToken,
     drizzleStatus: state.drizzleStatus
   }
 }

@@ -5,14 +5,13 @@ contract('ProofOfTimeTravel', (accounts) => {
   var account = accounts[0]
 
   it('deploy and grab', async () => {
-    Contract = await ProofOfTimeTravel.new()
-    // Contract = await ProofOfTimeTravel.at('0x488e9658bae7d527FC3A9303074e5AE05934C772')
+    // Contract = await ProofOfTimeTravel.new()
+    Contract = await ProofOfTimeTravel.at('0x345cA3e014Aaf5dcA488057592ee47305D9B3e10')
     console.log('Contract', Contract.address)
     // await Contract.send(web3.toWei(2, 'ether'))
   })
 
-
-  it('fires InvestmentEvent', (done) => {
+  xit('fires InvestmentEvent', (done) => {
     const value = web3.toWei(0.1, 'ether')
     var event = Contract.InvestmentEvent()
     event.watch(function (err, result) {

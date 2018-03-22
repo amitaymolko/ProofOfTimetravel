@@ -5,13 +5,16 @@ import PredictionsTable from '../../predictions/layouts/table/PredictionsTable'
 import TextField from 'material-ui/TextField'
 import RaisedButton from 'material-ui/RaisedButton'
 import Snackbar from 'material-ui/Snackbar'
+import { log } from 'util';
 
 class Home extends Component {
   constructor(props, context) {
     super(props)
-    const web3 = context.drizzle.web3
-    console.log('context.drizzle', context.drizzle.store.getState())
-    
+    const { web3 } = context.drizzle
+    const { accounts } = props
+    console.log('props', props)
+    console.log('context.drizzle', context.drizzle)
+    const account = accounts[0]
     const ProofOfTimeTravel = context.drizzle.contracts.ProofOfTimeTravel
 
     this.state = { 
@@ -20,7 +23,8 @@ class Home extends Component {
       dataKeys: {
         timeTravelProven: ProofOfTimeTravel.methods.timeTravelProven.cacheCall(),
         getPredictionsLength: ProofOfTimeTravel.methods.getPredictionsLength.cacheCall(),
-        getBlockNumber: ProofOfTimeTravel.methods.getBlockNumber.cacheCall(),
+        getPredictionByAddressLength: ProofOfTimeTravel.methods.getPredictionByAddressLength.cacheCall(account),
+        // getBlockNumber: ProofOfTimeTravel.methods.getBlockNumber.cacheCall(),
         getPrediction: {}
       },
       predictions: [],
@@ -31,6 +35,7 @@ class Home extends Component {
         blockNumber: '',
         blockHash: ''
       },
+      makePredictionStackIndex: null,
       makePredictionStackId: null,
       alert: {
         open: false,
@@ -54,16 +59,44 @@ class Home extends Component {
 
     // this.makeTxStackId = this.state.ProofOfTimeTravel.methods.makePrediction.cacheSend(500, '0xdec9baa88eaba16beada45c6bb941f18bb969eadecef0b0137fc718073c6cf88', { gas: 4700000})
   }
-  componentDidUpdate(prevProps, prevState) {
-    console.log('prevProps', prevProps)
-    console.log('prevState', prevState)
+  componentDidUpdate(prevProps, prevState) {    
+    if (this.state.makePredictionStackIndex != null) {
+      console.log('prevProps', prevProps)
+      console.log('this.props', this.props)
 
-    console.log('this.props', this.props)
-    console.log('this.state', this.state)
+      console.log('prevState', prevState)
+      console.log('this.state', this.state)
+      
+      if (this.state.makePredictionStackId == null && this.state.makePredictionStackIndex in this.props.transactionStack) {
+        const makePredictionStackId = this.props.transactionStack[this.state.makePredictionStackIndex]
+        this.setState({ makePredictionStackId })
+        console.log('makePredictionStackId', makePredictionStackId)
+        
+      } else if (this.state.makePredictionStackId != null && this.state.makePredictionStackId in this.props.transactions)  {
+        const transaction = this.props.transactions[this.state.makePredictionStackId]
+        console.log('transaction', transaction)
+        const status = transaction.status
+        if (status !== "pending") {
+          const success = transaction.confirmations[0].status == 0x01
+          console.log('success', success)
+
+          this.setState({ makePredictionStackId: null, makePredictionStackIndex: null})
+
+          if (success) {
+            this.showAlert('Submitted prediction')
+            this.reloadData()
+          } else {
+            
+            this.showAlert('Failed to submit prediction')
+            this.reloadData()
+          }
+        } 
+      }
+    }
   }
 
-
   reloadData() {
+    this.setState({predictions: []})
     this.getPredictionsNoCache()
     this.loadContractBalance()
     this.getBlockNumber()
@@ -131,20 +164,30 @@ class Home extends Component {
   }
 
   async getPredictionsNoCache () {
-    const predictions = []
+    const predictions = this.state.predictions
 
     const predictionsLength = await this.state.ProofOfTimeTravel.methods.getPredictionsLength().call()
+    console.log('predictionsLength', predictionsLength)
+    
     for (let index = 0; index < predictionsLength; index++) {
       const prediction = await this.state.ProofOfTimeTravel.methods.getPrediction(index).call()
+      console.log('prediction', prediction)
+      
       predictions[index] = prediction  
     }
-
+    console.log('predictions', predictions)
+    
     this.setState({
       predictions
     })  
   }
 
   async getBlockNumber () {
+    // if (this.state.dataKeys.getBlockNumber in this.props.ProofOfTimeTravel.getBlockNumber) {
+    //   const getBlockNumber = this.props.ProofOfTimeTravel.getBlockNumber[this.state.dataKeys.getBlockNumber].value
+    //   console.log('getBlockNumber', getBlockNumber)
+      
+    // } 
     const block = await this.state.web3.eth.getBlock('latest')
     const blockNumber = block.number
     this.setState({ blockNumber})
@@ -174,9 +217,9 @@ class Home extends Component {
 
   makePrediction = () => {
     const {form} = this.state
-    const makePredictionStackId = this.state.ProofOfTimeTravel.methods.makePrediction.cacheSend(form.blockNumber, form.blockHash, { gas: 120000})
-    this.setState({ makePredictionStackId})
-    console.log('makePredictionStackId', makePredictionStackId)
+    const makePredictionStackIndex = this.state.ProofOfTimeTravel.methods.makePrediction.cacheSend(form.blockNumber, form.blockHash, { gas: 140000})
+    this.setState({ makePredictionStackIndex})
+    console.log('makePredictionStackIndex', makePredictionStackIndex)
   
     this.setState({
       form: {
@@ -184,9 +227,6 @@ class Home extends Component {
         blockHash: ''
       }
     })
-
-    this.showAlert('Submitted prediction')
-    this.reloadData()
   }
 
   showAlert = (message) => {

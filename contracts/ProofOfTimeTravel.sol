@@ -67,6 +67,31 @@ contract ProofOfTimeTravel {
         }
         return -1;
     }
+
+    function getPredictionByAddressLength(address _address) public view returns(uint) {
+        uint count;
+        for (uint index = 0; index < predictions.length; index++) {
+            Prediction memory prediction = predictions[index];
+            if (prediction.predictor == _address) {
+                ++count;
+            }
+        }
+        return count;
+    }
+
+    function getPredictionByAddressByIndex(address _address, uint _index) public view returns(address, uint, bytes32, uint, bool) {
+        uint count;
+        for (uint index = 0; index < predictions.length; index++) {
+            Prediction memory prediction = predictions[index];
+            if (prediction.predictor == _address ) {
+                if (count == _index) {
+                    return this.getPrediction(index);
+                }
+                ++count;
+            }
+        }
+        revert();
+    }
     
     function getPrediction(uint _index) public view returns(address, uint, bytes32, uint, bool) {
         Prediction memory prediction = predictions[_index];
@@ -88,9 +113,5 @@ contract ProofOfTimeTravel {
 
     function timeTravelProven() public view returns(bool) {
         return this.getWinningPredictionsLength() > 0;
-    }
-
-    function getBlockNumber() public view returns(uint) {
-        return block.number;
     }
 }

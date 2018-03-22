@@ -5,25 +5,43 @@ import { routerMiddleware } from 'react-router-redux'
 import reducer from './reducer'
 import Reactotron from 'reactotron-react-js'
 import { reactotronRedux } from 'reactotron-redux'
+import createSagaMiddleware from 'redux-saga'
+import { all, fork } from 'redux-saga/effects'
+
+// import blocksSaga from './blocksSaga'
+import { log } from 'util';
 
 Reactotron
   .configure()
   .use(reactotronRedux())
   .connect() 
-  
+
 // Redux DevTools
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const routingMiddleware = routerMiddleware(browserHistory)
+
+const sagas = [
+  // blocksSaga
+]
+
+function* rootSaga() {  
+  yield all(sagas.map(saga => fork(saga)))
+}
+
+const sagaMiddleware = createSagaMiddleware()
 
 const store = Reactotron.createStore(
   reducer,
   composeEnhancers(
     applyMiddleware(
       thunkMiddleware,
-      routingMiddleware
+      routingMiddleware,
+      sagaMiddleware
     )
   )
 )
+
+sagaMiddleware.run(rootSaga)
 
 export default store
