@@ -12,8 +12,8 @@ class Home extends Component {
     super(props)
     const { web3 } = context.drizzle
     const { accounts } = props
-    console.log('props', props)
-    console.log('context.drizzle', context.drizzle)
+    // console.log('props', props)
+    // console.log('context.drizzle', context.drizzle)
     const account = accounts[0]
     const ProofOfTimeTravel = context.drizzle.contracts.ProofOfTimeTravel
 
@@ -24,7 +24,6 @@ class Home extends Component {
         timeTravelProven: ProofOfTimeTravel.methods.timeTravelProven.cacheCall(),
         getPredictionsLength: ProofOfTimeTravel.methods.getPredictionsLength.cacheCall(),
         getPredictionByAddressLength: ProofOfTimeTravel.methods.getPredictionByAddressLength.cacheCall(account),
-        // getBlockNumber: ProofOfTimeTravel.methods.getBlockNumber.cacheCall(),
         getPrediction: {}
       },
       predictions: [],
@@ -41,53 +40,33 @@ class Home extends Component {
         open: false,
         message: ''
       }
-    }
-
-    console.log('this.state.ProofOfTimeTravel', this.state.ProofOfTimeTravel)
-    
-    
-    // const block = this.web3.eth.getBlock('latest')
-    // console.log('block', block)
-    
-    // if (this.props.transactionStack[this.makeTxStackId]) {
-    //   const txHash = this.props.transactionStack[this.makeTxStackId]
-    //   console.log('txHash', txHash)
-    //   const status = this.props.transactions[txHash].status
-    //   console.log('status', status)
-
-    // }   
-
-    // this.makeTxStackId = this.state.ProofOfTimeTravel.methods.makePrediction.cacheSend(500, '0xdec9baa88eaba16beada45c6bb941f18bb969eadecef0b0137fc718073c6cf88', { gas: 4700000})
+    }    
   }
   componentDidUpdate(prevProps, prevState) {    
     if (this.state.makePredictionStackIndex != null) {
-      console.log('prevProps', prevProps)
-      console.log('this.props', this.props)
+      // console.log('prevProps', prevProps)
+      // console.log('this.props', this.props)
 
-      console.log('prevState', prevState)
-      console.log('this.state', this.state)
+      // console.log('prevState', prevState)
+      // console.log('this.state', this.state)
       
       if (this.state.makePredictionStackId == null && this.state.makePredictionStackIndex in this.props.transactionStack) {
         const makePredictionStackId = this.props.transactionStack[this.state.makePredictionStackIndex]
-        this.setState({ makePredictionStackId })
-        console.log('makePredictionStackId', makePredictionStackId)
-        
+        this.setState({ makePredictionStackId })        
       } else if (this.state.makePredictionStackId != null && this.state.makePredictionStackId in this.props.transactions)  {
         const transaction = this.props.transactions[this.state.makePredictionStackId]
-        console.log('transaction', transaction)
         const status = transaction.status
         if (status !== "pending") {
           const success = transaction.confirmations[0].status == 0x01
-          console.log('success', success)
 
           this.setState({ makePredictionStackId: null, makePredictionStackIndex: null})
 
           if (success) {
-            this.showAlert('Submitted prediction')
+            this.showAlert('Submitted prediction!')
             this.reloadData()
           } else {
             
-            this.showAlert('Failed to submit prediction')
+            this.showAlert('Failed to submit prediction :(')
             this.reloadData()
           }
         } 
@@ -96,7 +75,6 @@ class Home extends Component {
   }
 
   reloadData() {
-    this.setState({predictions: []})
     this.getPredictionsNoCache()
     this.loadContractBalance()
     this.getBlockNumber()
@@ -108,9 +86,7 @@ class Home extends Component {
 
   async loadContractBalance() {
     const weiBalance = await this.state.web3.eth.getBalance(this.state.address)
-    const balance = this.state.web3.utils.fromWei(weiBalance.toString(), 'ether') + ' ETH'
-    console.log('balance', balance)
-    
+    const balance = this.state.web3.utils.fromWei(weiBalance.toString(), 'ether') + ' ETH'    
     this.setState({balance})
   }
 
@@ -164,19 +140,14 @@ class Home extends Component {
   }
 
   async getPredictionsNoCache () {
-    const predictions = this.state.predictions
+    const predictions = []
 
-    const predictionsLength = await this.state.ProofOfTimeTravel.methods.getPredictionsLength().call()
-    console.log('predictionsLength', predictionsLength)
-    
+    const predictionsLength = await this.state.ProofOfTimeTravel.methods.getPredictionsLength().call()    
     for (let index = 0; index < predictionsLength; index++) {
-      const prediction = await this.state.ProofOfTimeTravel.methods.getPrediction(index).call()
-      console.log('prediction', prediction)
-      
+      const prediction = await this.state.ProofOfTimeTravel.methods.getPrediction(index).call()      
       predictions[index] = prediction  
     }
-    console.log('predictions', predictions)
-    
+
     this.setState({
       predictions
     })  
