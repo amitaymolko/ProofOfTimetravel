@@ -20,7 +20,7 @@ class PredictionsTable extends Component {
             <TableHeaderColumn>Block Number</TableHeaderColumn>
             <TableHeaderColumn>Hash</TableHeaderColumn>
             <TableHeaderColumn>Creation Block</TableHeaderColumn>
-            <TableHeaderColumn>Won</TableHeaderColumn>
+            <TableHeaderColumn>Proved Time Travel</TableHeaderColumn>
           </TableRow>
         </TableHeader>
         <TableBody>

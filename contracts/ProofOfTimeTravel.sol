@@ -28,7 +28,7 @@ contract ProofOfTimeTravel {
         _;
     }
 
-    function ProofOfTimeTravel() public {}
+    // function ProofOfTimeTravel() public {}
 
     function() public payable {
         InvestmentEvent(msg.sender, msg.value, block.number);
@@ -42,6 +42,7 @@ contract ProofOfTimeTravel {
     {
         predictions.push(Prediction(msg.sender, _block, _hash, block.number, false));
         PredictionEvent(msg.sender, block.number, predictions.length);
+        InvestmentEvent(msg.sender, msg.value, block.number);
     }
 
     function claimReward(uint _index) public {
@@ -51,9 +52,10 @@ contract ProofOfTimeTravel {
             prediction.won = true;
             winningPredictionIndexes.push(_index);
             prediction.predictor.transfer(this.balance);
-            FailedProofOfTimeTravelEvent(prediction.predictor, block.number, _index);
-        } else {
             ProofOfTimeTravelEvent(prediction.predictor, block.number, _index);
+        } else {
+            FailedProofOfTimeTravelEvent(prediction.predictor, block.number, _index);
+
         }
     }
     

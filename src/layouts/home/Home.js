@@ -201,11 +201,12 @@ class Home extends Component {
 
   makePrediction = () => {
     const {form} = this.state
-    const makePredictionStackIndex = this.state.ProofOfTimeTravel.methods.makePrediction.cacheSend(form.blockNumber, form.blockHash, { gas: 140000})
-    this.setState({ makePredictionStackIndex})
-    console.log('makePredictionStackIndex', makePredictionStackIndex)
+    
+    const value = this.state.web3.utils.toWei('0.001', 'ether').toString()
+    const makePredictionStackIndex = this.state.ProofOfTimeTravel.methods.makePrediction.cacheSend(form.blockNumber, form.blockHash, { gas: 140000, value })
   
     this.setState({
+      makePredictionStackIndex,
       form: {
         blockNumber: '',
         blockHash: ''
@@ -253,7 +254,7 @@ class Home extends Component {
           </div>
 
           <div className="pure-u-1-1">
-            <h2>Make Prediction: (Costs 0.01 ETH) </h2>
+            <h2>Make Prediction: (Costs 0.001 ETH) </h2>
             <TextField
               floatingLabelText="Block Number"
               id='blockNumber'
