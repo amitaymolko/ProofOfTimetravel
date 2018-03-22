@@ -22,6 +22,11 @@ contract ProofOfTimeTravel {
         require(_block > block.number);
         _;
     }
+    
+    modifier validValue() {
+        require(msg.value >= 0.001 ether);
+        _;
+    }
 
     function ProofOfTimeTravel() public {}
 
@@ -31,6 +36,8 @@ contract ProofOfTimeTravel {
 
     function makePrediction(uint _block, bytes32 _hash) 
     blockIsInfuture(_block)
+    validValue
+    payable
     public 
     {
         predictions.push(Prediction(msg.sender, _block, _hash, block.number, false));

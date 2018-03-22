@@ -20,13 +20,15 @@ class Home extends Component {
     this.state = { 
       web3,
       ProofOfTimeTravel,
+      account,
       dataKeys: {
         timeTravelProven: ProofOfTimeTravel.methods.timeTravelProven.cacheCall(),
-        getPredictionsLength: ProofOfTimeTravel.methods.getPredictionsLength.cacheCall(),
+        // getPredictionsLength: ProofOfTimeTravel.methods.getPredictionsLength.cacheCall(),
         getPredictionByAddressLength: ProofOfTimeTravel.methods.getPredictionByAddressLength.cacheCall(account),
         getPrediction: {}
       },
       predictions: [],
+      accountPredictions: [],
       address: ProofOfTimeTravel._address,
       blockNumber: 0,
       balance: 'loading...',
@@ -76,12 +78,13 @@ class Home extends Component {
 
   reloadData() {
     this.getPredictionsNoCache()
+    this.getAccountPredictionsNoCache(this.state.account)
     this.loadContractBalance()
-    this.getBlockNumber()
   }
 
   componentWillMount() {    
     this.reloadData()
+    this.startBlockLoader()
   }
 
   async loadContractBalance() {
@@ -141,7 +144,7 @@ class Home extends Component {
 
   async getPredictionsNoCache () {
     const predictions = []
-
+    
     const predictionsLength = await this.state.ProofOfTimeTravel.methods.getPredictionsLength().call()    
     for (let index = 0; index < predictionsLength; index++) {
       const prediction = await this.state.ProofOfTimeTravel.methods.getPrediction(index).call()      
@@ -153,15 +156,31 @@ class Home extends Component {
     })  
   }
 
+  async getAccountPredictionsNoCache (account) {
+    const accountPredictions = []
+    
+    const predictionsLength = await this.state.ProofOfTimeTravel.methods.getPredictionByAddressLength(account).call()    
+    for (let index = 0; index < predictionsLength; index++) {
+      const prediction = await this.state.ProofOfTimeTravel.methods.getPredictionByAddressByIndex(account, index).call()      
+      accountPredictions[index] = prediction  
+    }
+
+    this.setState({
+      accountPredictions
+    })  
+  }
+
   async getBlockNumber () {
-    // if (this.state.dataKeys.getBlockNumber in this.props.ProofOfTimeTravel.getBlockNumber) {
-    //   const getBlockNumber = this.props.ProofOfTimeTravel.getBlockNumber[this.state.dataKeys.getBlockNumber].value
-    //   console.log('getBlockNumber', getBlockNumber)
-      
-    // } 
-    const block = await this.state.web3.eth.getBlock('latest')
-    const blockNumber = block.number
-    this.setState({ blockNumber})
+      const block = await this.state.web3.eth.getBlock('latest')
+      const blockNumber = block.number
+      this.setState({ blockNumber })
+  }
+
+  startBlockLoader() {
+    this.getBlockNumber()
+    setInterval(() => {
+       this.getBlockNumber()
+    }, 5 * 1000)
   }
 
   orderByBlockNumber(predictions) {    
@@ -170,12 +189,6 @@ class Home extends Component {
 
   filterPendingPredictions(predictions, blocknumber) {
     return predictions.filter(prediction => (parseInt(prediction[1]) > blocknumber))
-  }
-
-  getPendingPredictions(predictions) {
-    let pendingPredictions = this.filterPendingPredictions(this.orderByBlockNumber(predictions), this.state.blockNumber)
-    pendingPredictions = pendingPredictions.slice(0, 10)
-    return pendingPredictions
   }
 
   handleChange = (event) => {
@@ -215,9 +228,11 @@ class Home extends Component {
 
 
   render() {
-    const { predictions, address, balance, blockNumber, alert} = this.state
+    const { predictions, accountPredictions, address, balance, blockNumber, alert} = this.state
     const timeTravelProvenString = this.getTimeTravelProvenString()
-    const pendingPredictions = this.getPendingPredictions(predictions)
+    const orderedPredictions = this.orderByBlockNumber(predictions)
+    const pendingPredictions = this.filterPendingPredictions(orderedPredictions, blockNumber).slice(0, 10)
+    const accountPredictionsOrdered = this.orderByBlockNumber(accountPredictions)
 
     return (
       <main className="container">
@@ -230,13 +245,15 @@ class Home extends Component {
           </div>
 
           <div className="pure-u-1-1">
-            <h2>Contract address: {address}</h2>
+            <h2>Donate:</h2>
+            <p>There are those who walk this earth claiming to have time traveled, and unlike god and reincarnation we can use the blockchain to prove this.</p>
+            <p>Contract address: {address}</p>
             <p>Balance: {balance}</p>
             <p>Last block: {blockNumber}</p>
           </div>
 
           <div className="pure-u-1-1">
-            <h2>Make Prediction:</h2>
+            <h2>Make Prediction: (Costs 0.01 ETH) </h2>
             <TextField
               floatingLabelText="Block Number"
               id='blockNumber'
@@ -253,6 +270,11 @@ class Home extends Component {
             <br />
             <RaisedButton label="Sumbit" primary={true} style={{ margin: 12 }} onClick={this.makePrediction} />
       
+          </div>
+
+          <div className="pure-u-1-1">
+            <h2>Your Predictions</h2>
+            <PredictionsTable predictions={accountPredictions} />
           </div>
 
           <div className="pure-u-1-1">
