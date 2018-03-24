@@ -16,15 +16,18 @@ class Home extends Component {
     // console.log('context.drizzle', context.drizzle)
     const account = accounts[0]
     const ProofOfTimeTravel = context.drizzle.contracts.ProofOfTimeTravel
+    let getPredictionByAddressLength 
+    if (account) {
+      getPredictionByAddressLength = ProofOfTimeTravel.methods.getPredictionByAddressLength.cacheCall(account)
+    }
 
-    this.state = { 
+    this.state = {
       web3,
       ProofOfTimeTravel,
       account,
       dataKeys: {
         timeTravelProven: ProofOfTimeTravel.methods.timeTravelProven.cacheCall(),
-        // getPredictionsLength: ProofOfTimeTravel.methods.getPredictionsLength.cacheCall(),
-        getPredictionByAddressLength: ProofOfTimeTravel.methods.getPredictionByAddressLength.cacheCall(account),
+        getPredictionByAddressLength,
         getPrediction: {}
       },
       predictions: [],
@@ -107,40 +110,40 @@ class Home extends Component {
     return 'Not Yet :('
   }
 
-  getPredictions() {
-    console.log('this.props.ProofOfTimeTravel.getPredictionsLength', this.props.ProofOfTimeTravel.getPredictionsLength)
+  // getPredictions() {
+  //   console.log('this.props.ProofOfTimeTravel.getPredictionsLength', this.props.ProofOfTimeTravel.getPredictionsLength)
     
-    if (this.state.dataKeys.getPredictionsLength in this.props.ProofOfTimeTravel.getPredictionsLength) {
-      const predictionsLength = this.props.ProofOfTimeTravel.getPredictionsLength[this.state.dataKeys.getPredictionsLength].value
-      console.log('predictionsLength', predictionsLength)
-      for (let index = 0; index < predictionsLength; index++) {
-        const getPrediction = this.state.dataKeys.getPrediction
+  //   if (this.state.dataKeys.getPredictionsLength in this.props.ProofOfTimeTravel.getPredictionsLength) {
+  //     const predictionsLength = this.props.ProofOfTimeTravel.getPredictionsLength[this.state.dataKeys.getPredictionsLength].value
+  //     console.log('predictionsLength', predictionsLength)
+  //     for (let index = 0; index < predictionsLength; index++) {
+  //       const getPrediction = this.state.dataKeys.getPrediction
 
-        if (!(index in this.state.dataKeys.getPrediction)) {
-          console.log('index', index)
+  //       if (!(index in this.state.dataKeys.getPrediction)) {
+  //         console.log('index', index)
           
-          getPrediction[index] = this.state.ProofOfTimeTravel.methods.getPrediction.cacheCall(index)
+  //         getPrediction[index] = this.state.ProofOfTimeTravel.methods.getPrediction.cacheCall(index)
           
-          this.setState({
-            dataKeys: {
-              getPrediction
-            }
-          })
-        } 
-        const dataKey = getPrediction[index]
-        if (dataKey in this.props.ProofOfTimeTravel.getPrediction) {
-          const prediction = this.props.ProofOfTimeTravel.getPrediction[dataKey].value
+  //         this.setState({
+  //           dataKeys: {
+  //             getPrediction
+  //           }
+  //         })
+  //       } 
+  //       const dataKey = getPrediction[index]
+  //       if (dataKey in this.props.ProofOfTimeTravel.getPrediction) {
+  //         const prediction = this.props.ProofOfTimeTravel.getPrediction[dataKey].value
 
-          const predictions = this.state.predictions
+  //         const predictions = this.state.predictions
           
-          predictions[index] = prediction
-          this.setState({
-            predictions
-          })          
-        }
-      }
-    }
-  }
+  //         predictions[index] = prediction
+  //         this.setState({
+  //           predictions
+  //         })          
+  //       }
+  //     }
+  //   }
+  // }
 
   async getPredictionsNoCache () {
     const predictions = []
@@ -229,7 +232,7 @@ class Home extends Component {
 
 
   render() {
-    const { predictions, accountPredictions, address, balance, blockNumber, alert} = this.state
+    const { predictions, accountPredictions, address, balance, blockNumber, alert, account} = this.state
     const timeTravelProvenString = this.getTimeTravelProvenString()
     const orderedPredictions = this.orderByBlockNumber(predictions)
     const pendingPredictions = this.filterPendingPredictions(orderedPredictions, blockNumber).slice(0, 10)
@@ -252,31 +255,40 @@ class Home extends Component {
             <p>Balance: {balance}</p>
             <p>Last block: {blockNumber}</p>
           </div>
-
           <div className="pure-u-1-1">
             <h2>Make Prediction: (Costs 0.001 ETH) </h2>
-            <TextField
-              floatingLabelText="Block Number"
-              id='blockNumber'
-              value={this.state.form.blockNumber} 
-              onChange={this.handleChange}
-              />
-            <br />
-            <TextField
-              floatingLabelText="Block Hash"
-              id='blockHash'
-              value={this.state.form.blockHash} 
-              onChange={this.handleChange}
-              />
-            <br />
-            <RaisedButton label="Sumbit" primary={true} style={{ margin: 12 }} onClick={this.makePrediction} />
-      
+            {account &&
+              <div>
+                <TextField
+                  floatingLabelText="Block Number"
+                  id='blockNumber'
+                  value={this.state.form.blockNumber}
+                  onChange={this.handleChange}
+                />
+                <br />
+                <TextField
+                  floatingLabelText="Block Hash"
+                  id='blockHash'
+                  value={this.state.form.blockHash}
+                  onChange={this.handleChange}
+                />
+                <br />
+                <RaisedButton label="Sumbit" primary={true} style={{ margin: 12 }} onClick={this.makePrediction} />
+              </div>
+            }
+            {!account && 
+              <div>
+                Need to connect an account
+              </div>
+            }
           </div>
 
+          {account &&
           <div className="pure-u-1-1">
             <h2>Your Predictions</h2>
             <PredictionsTable predictions={accountPredictions} />
           </div>
+          }
 
           <div className="pure-u-1-1">
             <h2>Pending Predictions (Next 10)</h2>

@@ -7,6 +7,12 @@ module.exports = {
       port: 7545,
       gas: 4700000,
       network_id: "*" // Match any network id
+    },
+    live: {
+      host: "mainnet.infura.io/metamask",
+      port: "80",
+      gas: 4700000,
+      network_id: "1"
     }
   },
   solc: {
