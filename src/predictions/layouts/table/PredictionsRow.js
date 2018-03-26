@@ -25,8 +25,8 @@ class PredictionsRow extends Component {
   getWinText(prediction) {
     if (prediction[4]) {
       return 'Won!'
-    } else if (parseInt(prediction[3]) < this.state.blockNumber) {
-      return 'Nope :('
+    } else if (parseInt(prediction[1]) < this.state.blockNumber) {
+      return 'Nope 😭'
     }
 
     return 'Not yet...';

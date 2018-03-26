@@ -9,10 +9,10 @@ import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
 import IconButton from 'material-ui/IconButton';
 import { GithubCircle } from 'mdi-material-ui'
+import { CircularProgress } from 'material-ui/Progress';
 
 import Button from 'material-ui/Button';
 import Logo from '../../Logo'
-console.log('Logo', Logo)
 
 import { log } from 'util';
 
@@ -52,7 +52,8 @@ class Home extends Component {
       makePredictionStackId: null,
       alert: {
         open: false,
-        message: ''
+        message: '',
+        autoHideDuration: null
       }
     }    
   }
@@ -76,11 +77,11 @@ class Home extends Component {
           this.setState({ makePredictionStackId: null, makePredictionStackIndex: null})
 
           if (success) {
-            this.showAlert('Submitted prediction!')
+            this.showAlert('Submitted prediction!', 4000)
             this.reloadData()
           } else {
             
-            this.showAlert('Failed to submit prediction :(')
+            this.showAlert('Failed to submit prediction :(', 4000)
             this.reloadData()
           }
         } 
@@ -116,7 +117,7 @@ class Home extends Component {
         // fetching
       }
     }
-    return 'Not Yet :('
+    return 'Not Yet 😭'
   }
 
   // getPredictions() {
@@ -224,12 +225,16 @@ class Home extends Component {
         blockHash: ''
       }
     })
+
+    this.showAlert('Submiting prediction... Please wait..')
+
   }
 
-  showAlert = (message) => {
+  showAlert = (message, autoHideDuration = null) => {
     const {alert} = this.state
     alert.open = true
     alert.message = message
+    alert.autoHideDuration = autoHideDuration
     this.setState({ alert })
   }
 
@@ -245,6 +250,9 @@ class Home extends Component {
     const timeTravelProvenString = this.getTimeTravelProvenString()
     const orderedPredictions = this.orderByBlockNumber(predictions)
     const pendingPredictions = this.filterPendingPredictions(orderedPredictions, blockNumber).slice(0, 10)
+    const firstPendingPrediction = pendingPredictions[0]
+    console.log('firstPendingPrediction', firstPendingPrediction)
+    
     const accountPredictionsOrdered = this.orderByBlockNumber(accountPredictions)
 
     return (
@@ -340,7 +348,7 @@ class Home extends Component {
         <Snackbar
           open={alert.open}
           message={alert.message}
-          autoHideDuration={4000}
+          autoHideDuration={alert.autoHideDuration}
           onRequestClose={this.handleRequestClose}
         />
       </main>
