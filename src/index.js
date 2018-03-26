@@ -5,13 +5,19 @@ import { Provider } from 'react-redux'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { DrizzleProvider } from 'drizzle-react'
 
+const __DEV__ = process.env.NODE_ENV !== 'production'
+
 // Layouts
 import App from './App'
 import HomeContainer from './layouts/home/HomeContainer'
 import LoadingContainer from './layouts/loading/LoadingContainer'
 
-// Contracts
-import ProofOfTimeTravel from './../build/contracts/ProofOfTimeTravel.json'
+
+import ProofOfTimeTravelProd from '../build_production/contracts/ProofOfTimeTravel.json'
+import ProofOfTimeTravelDev from '../build/contracts/ProofOfTimeTravel.json'
+
+const ProofOfTimeTravel = __DEV__ ? ProofOfTimeTravelDev : ProofOfTimeTravelProd
+
 
 // Redux Store
 import store from './store'
@@ -19,14 +25,17 @@ import store from './store'
 // Initialize react-router-redux.
 const history = syncHistoryWithStore(browserHistory, store)
 
+const devWebsocketUrl = 'ws://127.0.0.1:7545'
+const prodWebsocketUrl = 'wss://mainnet.infura.io/ws'
+const WebSocketUrl = __DEV__ ? devWebsocketUrl : prodWebsocketUrl
+
 // Set Drizzle options.
 const options = {
   web3: {
     block: false,
     fallback: {
       type: 'ws',
-      url: 'wss://mainnet.infura.io/ws'
-      // url: 'wss://socket.etherscan.io/wshandler'
+      url: WebSocketUrl
     }
   },
   contracts: [

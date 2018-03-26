@@ -285,25 +285,27 @@ class Home extends Component {
 
           <div className="pure-u-1-1">
             <h2>Make Prediction: (Costs 0.001 ETH) </h2>
-            <p>Last block: {blockNumber}</p>
 
             {account &&
               <div>
                 <TextField
-                  floatingLabelText="Block Number"
-                  id='blockNumber'
+                  id="blockNumber"
+                  label="Block Number"
                   value={this.state.form.blockNumber}
                   onChange={this.handleChange}
+                  margin="normal"
                 />
                 <br />
                 <TextField
-                  floatingLabelText="Block Hash"
                   id='blockHash'
+                  label="Block Hash"
                   value={this.state.form.blockHash}
                   onChange={this.handleChange}
                 />
                 <br />
-                <Button raised label="Submit" primary={true} style={{ margin: 12 }} onClick={this.makePrediction} />
+              <Button variant="raised" color="primary" onClick={this.makePrediction}  style={{marginTop: 8}}>
+                    Submit
+                </Button>
               </div>
             }
             {!account && 
@@ -313,6 +315,8 @@ class Home extends Component {
                 Please use <a href="https://github.com/ethereum/mist/releases" target="_blank"> Mist Browser</a> to connect an account
               </div>
             }
+            <p>Last block: {blockNumber}</p>
+
           </div>
 
           {account &&
