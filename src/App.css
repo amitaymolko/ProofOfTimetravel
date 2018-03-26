@@ -10,7 +10,10 @@ body,
 }
 
 .mainImage {
+  width: 100%;
   max-height: 300px;
+  overflow: hidden;
+  object-fit: cover;
 }
 
 h1, h2, h3 {
@@ -25,9 +28,8 @@ code {
 
 .container {
   box-sizing: border-box;
-  width: calc(100% - 60px);
-  /* max-width: 600px; */
-  padding: 45px 20px;
+  width: 100%;
+  /* padding: 45px 20px; */
   margin: 0 auto;
 }
 
@@ -111,4 +113,26 @@ ul li:not(:last-child) {
   color: darkgreen;
   background: darkseagreen;
   border: 1px solid darkgreen;
+}
+
+.toolbar {
+  max-width: 1200px;
+  width: 100%;
+  margin: auto;
+  padding: 0;
+}
+
+.mainContent {
+  max-width: 1200px;
+  width: 100%;
+  margin: auto;
+  padding: 0 24px;
+}
+
+.footer {
+  max-width: 1200px;
+  width: 100%;
+  margin: auto;
+  padding: 8px 0;
+  font-size: 1em;
 }

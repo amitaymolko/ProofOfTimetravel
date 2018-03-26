@@ -25,7 +25,8 @@ const options = {
     block: false,
     fallback: {
       type: 'ws',
-      url: 'wss://mainnet.infura.io/_ws'
+      url: 'wss://mainnet.infura.io/ws'
+      // url: 'wss://socket.etherscan.io/wshandler'
     }
   },
   contracts: [

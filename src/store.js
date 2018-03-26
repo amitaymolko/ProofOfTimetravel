@@ -11,11 +11,16 @@ import { all, fork } from 'redux-saga/effects'
 // import blocksSaga from './blocksSaga'
 import { log } from 'util';
 
+const __DEV__ = process.env.NODE_ENV !== 'production'
+
 Reactotron
   .configure()
   .use(reactotronRedux())
-  .connect() 
 
+if (__DEV__) {
+  Reactotron
+    .connect() // let's connect!
+}
 // Redux DevTools
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 

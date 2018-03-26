@@ -3,8 +3,17 @@ import React, { Component } from 'react'
 import timetravel from '../../timetravel.jpg'
 import PredictionsTable from '../../predictions/layouts/table/PredictionsTable'
 import TextField from 'material-ui/TextField'
-import RaisedButton from 'material-ui/RaisedButton'
 import Snackbar from 'material-ui/Snackbar'
+import AppBar from 'material-ui/AppBar';
+import Toolbar from 'material-ui/Toolbar';
+import Typography from 'material-ui/Typography';
+import IconButton from 'material-ui/IconButton';
+import { GithubCircle } from 'mdi-material-ui'
+
+import Button from 'material-ui/Button';
+import Logo from '../../Logo'
+console.log('Logo', Logo)
+
 import { log } from 'util';
 
 class Home extends Component {
@@ -240,23 +249,44 @@ class Home extends Component {
 
     return (
       <main className="container">
+        <AppBar position="static" color="default">
+          <Toolbar className="toolbar">
+            <Logo style={{ margin: 8 }}/>
+            <Typography variant="title" color="inherit" style={{flex: 1}}>
+              Proof of Time-Travel
+            </Typography>
+            <a href="https://github.com/amitaymolko/ProofOfTimetravel" target="_blank">
+              <IconButton>
+                <GithubCircle style={{ color: 'black'}}/>
+              </IconButton>
+            </a>
+          </Toolbar>
+        </AppBar>
         <div className="pure-g">
           <div className="pure-u-1-1 header">
-            <img src={timetravel} alt="timetravel-logo" className="mainImage"/>
+            <img src={timetravel} alt="timetravel-logo" className="mainImage" />
             <h1>Proof of Time-Travel</h1>
             <p>Has anyone proven they are from the future? {timeTravelProvenString}</p>
-            <br/><br/>
+            <br /><br />
+          </div>
+        </div>
+        <div className="pure-g" className="mainContent">
+          <div className="pure-u-1-1">
+            <h2>Info:</h2>
+            <p>There are those who walk this earth claiming to have time traveled, and unlike god and reincarnation we can use the blockchain to prove this.</p>
+            <p>Interested in learning more about time travelers? Check out: <a href="https://www.youtube.com/playlist?list=PLfunr83g9NtF0Go48pxcr_kkEdeMsrEVn">ApexTX</a></p>
           </div>
 
           <div className="pure-u-1-1">
             <h2>Donate:</h2>
-            <p>There are those who walk this earth claiming to have time traveled, and unlike god and reincarnation we can use the blockchain to prove this.</p>
             <p>Contract address: {address}</p>
             <p>Balance: {balance}</p>
-            <p>Last block: {blockNumber}</p>
           </div>
+
           <div className="pure-u-1-1">
             <h2>Make Prediction: (Costs 0.001 ETH) </h2>
+            <p>Last block: {blockNumber}</p>
+
             {account &&
               <div>
                 <TextField
@@ -273,12 +303,14 @@ class Home extends Component {
                   onChange={this.handleChange}
                 />
                 <br />
-                <RaisedButton label="Sumbit" primary={true} style={{ margin: 12 }} onClick={this.makePrediction} />
+                <Button raised label="Submit" primary={true} style={{ margin: 12 }} onClick={this.makePrediction} />
               </div>
             }
             {!account && 
               <div>
-                Need to connect an account
+                Need to connect an account.
+                <br/ >
+                Please use <a href="https://github.com/ethereum/mist/releases" target="_blank"> Mist Browser</a> to connect an account
               </div>
             }
           </div>
@@ -294,7 +326,13 @@ class Home extends Component {
             <h2>Pending Predictions (Next 10)</h2>
             <PredictionsTable predictions={pendingPredictions}/>
           </div>
+          <div className="pure-u-1-1">
+            <span className="footer">
+              Built with 🤡 by <a href="https://www.facebook.com/groups/1938583353046324/"> BlockchainJLM </a>
+            </span>
+          </div>
         </div>
+        
         <Snackbar
           open={alert.open}
           message={alert.message}

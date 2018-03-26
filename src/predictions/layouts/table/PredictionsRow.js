@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import {
   TableRow,
-  TableRowColumn,
+  TableCell,
 } from 'material-ui/Table';
 import PropTypes from 'prop-types'
 
@@ -37,11 +37,11 @@ class PredictionsRow extends Component {
     const winText = this.getWinText(prediction)
     return(
       <TableRow>
-        <TableRowColumn>{prediction[0]}</TableRowColumn>
-        <TableRowColumn>{prediction[1]}</TableRowColumn>
-        <TableRowColumn>{prediction[2]}</TableRowColumn>
-        <TableRowColumn>{prediction[3]}</TableRowColumn>
-        <TableRowColumn>{winText}</TableRowColumn>
+        <TableCell>{prediction[0]}</TableCell>
+        <TableCell>{prediction[1]}</TableCell>
+        <TableCell>{prediction[2]}</TableCell>
+        <TableCell>{prediction[3]}</TableCell>
+        <TableCell>{winText}</TableCell>
       </TableRow>
     )
   }

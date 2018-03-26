@@ -1,11 +1,5 @@
 import React, { Component } from 'react'
-import {
-  Table,
-  TableBody,
-  TableHeader,
-  TableHeaderColumn,
-  TableRow
-} from 'material-ui/Table';
+import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 
 import PredictionsRow from './PredictionsRow'
 
@@ -14,15 +8,15 @@ class PredictionsTable extends Component {
     const {predictions} = this.props
     return(
       <Table>
-        <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+        <TableHead>
           <TableRow>
-            <TableHeaderColumn>Address</TableHeaderColumn>
-            <TableHeaderColumn>Block Number</TableHeaderColumn>
-            <TableHeaderColumn>Hash</TableHeaderColumn>
-            <TableHeaderColumn>Creation Block</TableHeaderColumn>
-            <TableHeaderColumn>Proved Time Travel</TableHeaderColumn>
+            <TableCell>Address</TableCell>
+            <TableCell>Block Number</TableCell>
+            <TableCell>Hash</TableCell>
+            <TableCell>Creation Block</TableCell>
+            <TableCell>Proved Time Travel</TableCell>
           </TableRow>
-        </TableHeader>
+        </TableHead>
         <TableBody>
           {predictions.map(prediction => 
             {
