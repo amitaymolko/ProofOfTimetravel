@@ -1,5 +1,18 @@
+const HDWalletProvider = require("truffle-hdwallet-provider-privkey");
+require('dotenv').config()
+
+const INFRA_ID = process.env.INFRA_ID
+const PRIVATE_KEY = process.env.PRIVATE_KEY
+const FROM_ADDRESS = process.env.FROM_ADDRESS
+
 module.exports = {
   migrations_directory: "./migrations",
+  solc: {
+    optimizer: {
+      enabled: true,
+      runs: 200
+    }
+  },
   networks: {
     development: {
       // host: "localhost",
@@ -9,9 +22,12 @@ module.exports = {
       network_id: "*" // Match any network id
     },
     live: {
-      host: "mainnet.infura.io/metamask",
-      port: "80",
+      provider: () => {
+        return new HDWalletProvider(PRIVATE_KEY, `https://mainnet.infura.io/${INFRA_ID}`)
+      },
+      from: FROM_ADDRESS,
       gas: 4700000,
+      gasPrice: 3000000000,
       network_id: "1"
     }
   },

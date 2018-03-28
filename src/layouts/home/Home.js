@@ -10,6 +10,7 @@ import Typography from 'material-ui/Typography';
 import IconButton from 'material-ui/IconButton';
 import { GithubCircle } from 'mdi-material-ui'
 import { CircularProgress } from 'material-ui/Progress';
+import Card, { CardActions, CardContent } from 'material-ui/Card';
 
 import Button from 'material-ui/Button';
 import Logo from '../../Logo'
@@ -117,7 +118,7 @@ class Home extends Component {
         // fetching
       }
     }
-    return 'Not Yet 😭'
+    return 'Not Yet'
   }
 
   // getPredictions() {
@@ -250,8 +251,8 @@ class Home extends Component {
     const timeTravelProvenString = this.getTimeTravelProvenString()
     const orderedPredictions = this.orderByBlockNumber(predictions)
     const pendingPredictions = this.filterPendingPredictions(orderedPredictions, blockNumber).slice(0, 10)
-    const firstPendingPrediction = pendingPredictions[0]
-    console.log('firstPendingPrediction', firstPendingPrediction)
+    // const firstPendingPrediction = pendingPredictions[0]
+    // console.log('firstPendingPrediction', firstPendingPrediction)
     
     const accountPredictionsOrdered = this.orderByBlockNumber(accountPredictions)
 
@@ -270,28 +271,33 @@ class Home extends Component {
             </a>
           </Toolbar>
         </AppBar>
-        <div className="pure-g">
-          <div className="pure-u-1-1 header">
-            <img src={timetravel} alt="timetravel-logo" className="mainImage" />
-            <h1>Proof of Time-Travel</h1>
-            <p>Has anyone proven they are from the future? {timeTravelProvenString}</p>
-            <br /><br />
+        <div className="">
+          <div className=" header">
+            <div style={{ backgroundImage: `url(${timetravel})` }} className="mainImage">
+              <div className="mainImageContent">
+                <h1>Proof of Time-Travel</h1>
+                <p>Has anyone proven they are from the future? <br /> {timeTravelProvenString}</p>
+              </div>
+            </div>
+            {/* <img src={timetravel} alt="timetravel-logo" className="mainImage" /> */}
+            
           </div>
         </div>
-        <div className="pure-g" className="mainContent">
-          <div className="pure-u-1-1">
+        <div className="" className="mainContent">
+          <Card className="card">
             <h2>Info:</h2>
             <p>There are those who walk this earth claiming to have time traveled, and unlike god and reincarnation we can use the blockchain to prove this.</p>
             <p>Interested in learning more about time travelers? Check out: <a href="https://www.youtube.com/playlist?list=PLfunr83g9NtF0Go48pxcr_kkEdeMsrEVn">ApexTX</a></p>
-          </div>
+          </Card>
 
-          <div className="pure-u-1-1">
+          <Card className="card">
             <h2>Donate:</h2>
             <p>Contract address: {address}</p>
             <p>Balance: {balance}</p>
-          </div>
+            <p><a href="https://github.com/amitaymolko/ProofOfTimetravel/blob/master/contracts/ProofOfTimeTravel.sol" target="_blank">View Source Code</a></p>
+          </Card>
 
-          <div className="pure-u-1-1">
+          <Card className="card">
             <h2>Make Prediction: (Costs 0.001 ETH) </h2>
 
             {account &&
@@ -325,20 +331,20 @@ class Home extends Component {
             }
             <p>Last block: {blockNumber}</p>
 
-          </div>
+          </Card>
 
           {account &&
-          <div className="pure-u-1-1">
+            <Card className="card">
             <h2>Your Predictions</h2>
             <PredictionsTable predictions={accountPredictions} />
-          </div>
+          </Card>
           }
 
-          <div className="pure-u-1-1">
+          <Card className="card">
             <h2>Pending Predictions (Next 10)</h2>
             <PredictionsTable predictions={pendingPredictions}/>
-          </div>
-          <div className="pure-u-1-1">
+          </Card>
+          <div className="">
             <span className="footer">
               Built with 🤡 by <a href="https://www.facebook.com/groups/1938583353046324/"> BlockchainJLM </a>
             </span>
