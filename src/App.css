@@ -5,12 +5,19 @@ body,
   font-family: 'Open Sans', sans-serif;
   background-color: #eeeeee;
 }
+
 .card {
   padding: 16px;
   margin: 16px;
+  overflow-x: auto;
 }
+
 .header {
   text-align: center;
+}
+
+.appBar {
+  display: block !important; 
 }
 
 .mainImage {
@@ -36,6 +43,8 @@ body,
 
 h1, h2, h3 {
   font-family: 'Oswald', 'Arial Narrow', sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 code {
@@ -135,14 +144,14 @@ ul li:not(:last-child) {
 
 .toolbar {
   max-width: 1200px;
-  width: 100%;
+  /* width: 100%; */
   margin: auto;
   padding: 0;
 }
 
 .mainContent {
   max-width: 1200px;
-  width: 100%;
+  /* width: 100%; */
   margin: auto;
   padding: 0 24px;
 }
@@ -153,4 +162,5 @@ ul li:not(:last-child) {
   margin: auto;
   padding: 8px 0;
   font-size: 1em;
+  text-align: center;
 }

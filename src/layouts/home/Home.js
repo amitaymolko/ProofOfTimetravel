@@ -258,7 +258,7 @@ class Home extends Component {
 
     return (
       <main className="container">
-        <AppBar position="static" color="default">
+        <AppBar position="static" color="default" className="appBar">
           <Toolbar className="toolbar">
             <Logo style={{ margin: 8 }}/>
             <Typography variant="title" color="inherit" style={{flex: 1}}>
@@ -287,7 +287,10 @@ class Home extends Component {
           <Card className="card">
             <h2>Info:</h2>
             <p>There are those who walk this earth claiming to have time traveled, and unlike god and reincarnation we can use the blockchain to prove this.</p>
-            <p>Interested in learning more about time travelers? Check out: <a href="https://www.youtube.com/playlist?list=PLfunr83g9NtF0Go48pxcr_kkEdeMsrEVn">ApexTX</a></p>
+            <h2>How does it work?</h2>
+            <p>A time traveler just needs to enter a future block number and its hash. <br />This will prove on the blockchain that the time traveler knew the hash before it was mined, therefore that they are from the future (or super extremely lucky). <br /> When a time traveler successfully proves that they time traveled they will be able to claim all the ETH in the smart contract.</p>
+            <h2>Interested in learning more about time travelers? </h2>
+            <p>Check out: <a href="https://www.youtube.com/playlist?list=PLfunr83g9NtF0Go48pxcr_kkEdeMsrEVn">ApexTX</a></p>
           </Card>
 
           <Card className="card">
@@ -318,8 +321,8 @@ class Home extends Component {
                 />
                 <br />
               <Button variant="raised" color="primary" onClick={this.makePrediction}  style={{marginTop: 8}}>
-                    Submit
-                </Button>
+                  Submit
+              </Button>
               </div>
             }
             {!account && 
@@ -330,22 +333,21 @@ class Home extends Component {
               </div>
             }
             <p>Last block: {blockNumber}</p>
-
+            {account &&
+              <div>
+                <h2>Your Predictions</h2>
+                <PredictionsTable predictions={accountPredictions} />
+              </div>
+            }
           </Card>
 
-          {account &&
-            <Card className="card">
-            <h2>Your Predictions</h2>
-            <PredictionsTable predictions={accountPredictions} />
-          </Card>
-          }
 
           <Card className="card">
             <h2>Pending Predictions (Next 10)</h2>
             <PredictionsTable predictions={pendingPredictions}/>
           </Card>
-          <div className="">
-            <span className="footer">
+          <div className="footer">
+            <span>
               Built with 🤡 by <a href="https://www.facebook.com/groups/1938583353046324/"> BlockchainJLM </a>
             </span>
           </div>

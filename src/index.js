@@ -26,7 +26,9 @@ import store from './store'
 const history = syncHistoryWithStore(browserHistory, store)
 
 const devWebsocketUrl = 'ws://127.0.0.1:7545'
-const prodWebsocketUrl = 'wss://mainnet.infura.io/ws'
+// const prodWebsocketUrl = 'wss://mainnet.infura.io/ws'
+const prodWebsocketUrl = 'ws://34.235.133.122:8546'
+
 const WebSocketUrl = __DEV__ ? devWebsocketUrl : prodWebsocketUrl
 
 // Set Drizzle options.
