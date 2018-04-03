@@ -112,13 +112,13 @@ class Home extends Component {
       if (this.state.dataKeys.timeTravelProven in this.props.ProofOfTimeTravel.timeTravelProven) {
         const timeTravelProven = this.props.ProofOfTimeTravel.timeTravelProven[this.state.dataKeys.timeTravelProven].value
         if (timeTravelProven) {
-          return "OMG! YES!"
+          return "✅ OMG! YES!"
         }
       } else {
         // fetching
       }
     }
-    return 'Not Yet'
+    return '❌ Not Yet'
   }
 
   // getPredictions() {
@@ -276,7 +276,7 @@ class Home extends Component {
             <div style={{ backgroundImage: `url(${timetravel})` }} className="mainImage">
               <div className="mainImageContent">
                 <h1>Proof of Time-Travel</h1>
-                <p>Has anyone proven they are from the future? <br /> {timeTravelProvenString}</p>
+                <h2>Has anyone proven that they are from the future? <br /> {timeTravelProvenString}</h2>
               </div>
             </div>
             {/* <img src={timetravel} alt="timetravel-logo" className="mainImage" /> */}
@@ -290,7 +290,7 @@ class Home extends Component {
             <h2>How does it work?</h2>
             <p>A time traveler just needs to enter a future block number and its hash. <br />This will prove on the blockchain that the time traveler knew the hash before it was mined, therefore that they are from the future (or super extremely lucky). <br /> When a time traveler successfully proves that they time traveled they will be able to claim all the ETH in the smart contract.</p>
             <h2>Interested in learning more about time travelers? </h2>
-            <p>Check out: <a href="https://www.youtube.com/playlist?list=PLfunr83g9NtF0Go48pxcr_kkEdeMsrEVn">ApexTX</a></p>
+            <p>Check out: <a href="https://www.youtube.com/playlist?list=PLfunr83g9NtF0Go48pxcr_kkEdeMsrEVn">ApexTX</a>, <a href="https://en.wikipedia.org/wiki/Time_travel">Wiki</a></p>
           </Card>
 
           <Card className="card">
@@ -329,7 +329,7 @@ class Home extends Component {
               <div>
                 Need to connect an account.
                 <br/ >
-                Please use <a href="https://github.com/ethereum/mist/releases" target="_blank"> Mist Browser</a> to connect an account
+              Please use <a href="https://github.com/ethereum/mist/releases" target="_blank"> Mist Browser</a> to connect an account
               </div>
             }
             <p>Last block: {blockNumber}</p>
@@ -347,6 +347,10 @@ class Home extends Component {
             <PredictionsTable predictions={pendingPredictions}/>
           </Card>
           <div className="footer">
+            <span>
+            * Please Notice! This app only works in universes with a single timeline. Use in universes with multiple timelines may cause destabilization of reality.
+            </span>
+            <br/>
             <span>
               Built with 🤡 by <a href="https://www.facebook.com/groups/1938583353046324/"> BlockchainJLM </a>
             </span>

@@ -1,4 +1,6 @@
 import React, { Component, Children } from 'react'
+import Card from 'material-ui/Card';
+import { CircularProgress } from 'material-ui/Progress';
 
 class Loading extends Component {
   constructor(props, context) {
@@ -16,12 +18,10 @@ class Loading extends Component {
     {
       return(
         <main className="container loading-screen">
-          <div className="pure-g">
-            <div className="pure-u-1-1">
-              <h1>⚠️</h1>
-              <p>This browser has no connection to the Ethereum network. Please use a dedicated Ethereum browser like Mist or Parity.</p>
-            </div>
-          </div>
+          <Card className="card centerCard">
+            <h1>⚠️</h1>
+            <p>This browser has no connection to the Ethereum network. Please use a dedicated Ethereum browser like Mist or Parity.</p>
+          </Card>
         </main>
       )
     }
@@ -30,12 +30,10 @@ class Loading extends Component {
       if (this.state.drizzle.web3.currentProvider.isMetaMask) {
         return (
           <main className="container loading-screen">
-            <div className="pure-g">
-              <div className="pure-u-1-1">
-                <h1>⚠️</h1>
-                <p>This browser is using MetaMask, unfortunately MetaMask doesn't support web3 v1.0 yet so it doesn't work with this dapp :( <br /> Please disable MetaMask to continue... <br /> <a href="https://github.com/MetaMask/metamask-extension/issues/2350">more info</a></p>
-              </div>
-            </div>
+            <Card className="card centerCard">
+              <h1>⚠️</h1>
+              <p>This browser is using MetaMask, unfortunately MetaMask doesn't support web3 v1.0 yet so it doesn't work with this dapp :( <br /> Please disable MetaMask to continue... <br /> <a href="https://github.com/MetaMask/metamask-extension/issues/2350">more info</a></p>
+            </Card>
           </main>
         )
       }
@@ -48,12 +46,11 @@ class Loading extends Component {
 
     return(
       <main className="container loading-screen">
-        <div className="pure-g">
-          <div className="pure-u-1-1">
-            <h1>⚙️</h1>
-            <p>Loading dapp...</p>
-          </div>
-        </div>
+        <Card className="card centerCard">
+          <CircularProgress
+          />
+          <p>Loading dapp...</p>
+        </Card>
       </main>
     )
   }

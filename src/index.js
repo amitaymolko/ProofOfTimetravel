@@ -25,9 +25,11 @@ import store from './store'
 // Initialize react-router-redux.
 const history = syncHistoryWithStore(browserHistory, store)
 
-const devWebsocketUrl = 'ws://127.0.0.1:7545'
-// const prodWebsocketUrl = 'wss://mainnet.infura.io/ws'
-const prodWebsocketUrl = 'ws://34.235.133.122:8546'
+// const devWebsocketUrl = 'ws://127.0.0.1:7545'
+const devWebsocketUrl = 'wss://mainnet.infura.io/ws'
+
+const prodWebsocketUrl = 'wss://mainnet.infura.io/ws'
+// const prodWebsocketUrl = 'ws://34.235.133.122:8546'
 
 const WebSocketUrl = __DEV__ ? devWebsocketUrl : prodWebsocketUrl
 
