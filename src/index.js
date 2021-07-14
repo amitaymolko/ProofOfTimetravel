@@ -4,8 +4,9 @@ import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import { Provider } from 'react-redux'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { DrizzleProvider } from 'drizzle-react'
+import Portis from 'portis'
 
-const __DEV__ = process.env.NODE_ENV !== 'production'
+let __DEV__ = process.env.NODE_ENV !== 'production'
 
 // Layouts
 import App from './App'
@@ -26,10 +27,11 @@ import store from './store'
 const history = syncHistoryWithStore(browserHistory, store)
 
 // const devWebsocketUrl = 'ws://127.0.0.1:7545'
-const devWebsocketUrl = 'wss://mainnet.infura.io/ws'
+const devWebsocketUrl = 'wss://mainnet.infura.io/ws/v3/87412e99c8bd4f5d8d6ea5b9b810a712'
 
-const prodWebsocketUrl = 'wss://mainnet.infura.io/ws'
+const prodWebsocketUrl = 'wss://mainnet.infura.io/ws/v3/87412e99c8bd4f5d8d6ea5b9b810a712'
 // const prodWebsocketUrl = 'ws://34.235.133.122:8546'
+
 
 const WebSocketUrl = __DEV__ ? devWebsocketUrl : prodWebsocketUrl
 
